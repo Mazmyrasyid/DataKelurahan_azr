@@ -1,9 +1,25 @@
-from django.urls import path
-from .views import WargaDetailAPIView, WargaListAPIView,PengaduanListAPIView,  PengaduanDetailAPIView
+# warga/api_urls.py
 
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import WargaViewSet, PengaduanViewSet # Pastikan Anda mengimpor ViewSet
+
+# --- INISIALISASI ROUTER ---
+
+# 1. Buat sebuah router
+router = DefaultRouter()
+
+# 2. Daftarkan ViewSet untuk Warga (Menggantikan 2 baris path() lama)
+router.register(r'warga', WargaViewSet, basename='warga')
+
+# 3. Daftarkan ViewSet untuk Pengaduan (Menyelesaikan tugas praktikum)
+router.register(r'pengaduan', PengaduanViewSet, basename='pengaduan')
+
+# --- DEFINISI URL ---
+
+# URL API sekarang ditentukan secara otomatis oleh router.
+# path('', include(router.urls)) akan menghasilkan 4 URL endpoint untuk setiap ViewSet
 urlpatterns = [
-    path('warga/', WargaListAPIView.as_view(), name='api-warga-list'),
-    path('warga/<int:pk>/', WargaDetailAPIView.as_view(), name='api-warga-detail'),
-    path('pengaduan/', PengaduanListAPIView.as_view(), name='api-pengaduan-list'),
-    path('pengaduan/<int:pk>/', PengaduanDetailAPIView.as_view(), name='api-pengaduan-detail'),
+    # Baris ini secara otomatis mencakup semua URL yang dibuat oleh router
+    path('', include(router.urls)), 
 ]

@@ -3,9 +3,14 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Warga, Pengaduan
 from django.urls import reverse_lazy
 from .forms import WargaForm, PengaduanForm
-# rest API
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+
+# Impor baru untuk DRF
+from rest_framework import viewsets # Mengganti ListAPIView, RetrieveAPIView
 from .serializers import WargaSerializer, PengaduanSerializer
+
+# -----------------------------------------------------
+# --- DJANGO HTML CLASS-BASED VIEWS (CBV) ---
+# -----------------------------------------------------
 
 class WargaListView(ListView):
     model = Warga
@@ -93,19 +98,45 @@ class PengaduanDetailView(DetailView):
         context['name'] = 'Detail Pengaduan'
         return context
     
-# --- API VIEWS ---
-class WargaListAPIView(ListAPIView):
-    queryset = Warga.objects.all()
+# -----------------------------------------------------
+# --- API VIEWS (Menggunakan ModelViewSet) ---
+# -----------------------------------------------------
+
+# Kita hapus/ganti WargaListAPIView dan WargaDetailAPIView
+
+# class WargaListAPIView(ListAPIView):
+#     queryset = Warga.objects.all()
+#     serializer_class = WargaSerializer
+
+# class WargaDetailAPIView(RetrieveAPIView):
+#     queryset = Warga.objects.all()
+#     serializer_class = WargaSerializer
+
+# Kita hapus/ganti PengaduanListAPIView dan PengaduanDetailAPIView
+
+# class PengaduanListAPIView(ListAPIView):
+#     queryset = Pengaduan.objects.all()
+#     serializer_class = PengaduanSerializer
+
+# class PengaduanDetailAPIView(RetrieveAPIView):
+#     queryset = Pengaduan.objects.all()
+#     serializer_class = PengaduanSerializer
+
+
+# Mengganti WargaListAPIView & WargaDetailAPIView dengan WargaViewSet
+class WargaViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint yang memungkinkan Warga dilihat, dibuat, diperbarui, atau dihapus.
+    Menggantikan WargaListAPIView dan WargaDetailAPIView.
+    """
+    queryset = Warga.objects.all().order_by('-tanggal_registrasi') # Sesuaikan pengurutan jika perlu
     serializer_class = WargaSerializer
 
-class WargaDetailAPIView(RetrieveAPIView):
-    queryset = Warga.objects.all()
-    serializer_class = WargaSerializer
-
-class PengaduanListAPIView(ListAPIView):
-    queryset = Pengaduan.objects.all()
-    serializer_class = PengaduanSerializer
-
-class PengaduanDetailAPIView(RetrieveAPIView):
-    queryset = Pengaduan.objects.all()
+# Menambahkan PengaduanViewSet untuk menyelesaikan tugas praktikum
+class PengaduanViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint yang memungkinkan Pengaduan dilihat, dibuat, diperbarui, atau dihapus.
+    Menggantikan PengaduanListAPIView dan PengaduanDetailAPIView.
+    """
+    queryset = Pengaduan.objects.all().order_by('-tanggal_pengaduan')
     serializer_class = PengaduanSerializer
